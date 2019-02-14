@@ -116,13 +116,13 @@ void CheckRotary2()
       Serial.println("Clockwise --2");
       bpm--;
       bpmMmillis = (float)60 / (float)bpm * (float)1000;
-      WriteText7Segment("B-" + String(bpm));
+//      WriteText7Segment("B-" + String(bpm));
     }
     else if (result == r2.counterClockwise()) {
       Serial.println("Counter-Clockwise  --2");
       bpm++;
       bpmMmillis = (float)60 / (float)bpm * (float)1000;
-      WriteText7Segment("B-" + String(bpm));
+//      WriteText7Segment("B-" + String(bpm));
     }
   }
   if (r2.buttonPressedReleased(25)) {
@@ -130,7 +130,7 @@ void CheckRotary2()
     menu = 1;
     if (runSequencer && menu == 1)
     {
-      WriteText7Segment("B-" + String(bpm));
+//      WriteText7Segment("B-" + String(bpm));
     }
   }
 }

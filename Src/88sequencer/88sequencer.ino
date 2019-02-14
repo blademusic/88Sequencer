@@ -5,13 +5,9 @@ LedControl lc = LedControl(12, 10, 11, 2); // Pins: DIN,CLK,CS, # of Display con
 Rotary r = Rotary(4, 3, 2);        // there is no must for using interrupt pins !!
 Rotary r2=Rotary(7,6,5);
 
-
-
 const int  buttonPin = 8;
 int OutPut0 = 9;
 int OutPut1 = 13;
-
-
 
 int x = 0;
 int maxNumber = 2;
@@ -32,7 +28,23 @@ bool selectedDotStatus=false;
 long selectedoutputOnTime=0;
 bool selectedoutputStatus=false;
 
+int row0Step=0;
+int row1Step=0;
+int row2Step=0;
+int row3Step=0;
+int row4Step=0;
+int row5Step=0;
+int row6Step=15;
+int row7Step=15;
 
+int row0StepDir=1;
+int row1StepDir=1;
+int row2StepDir=1;
+int row3StepDir=0;
+int row4StepDir=1;
+int row5StepDir=1;
+int row6StepDir=2;
+int row7StepDir=2;
 
 void setup()
 {
@@ -59,13 +71,6 @@ pinMode(OutPut1, OUTPUT);
 
 
 
-
-
-  WriteText7Segment("D blade.");
-  delay(2000);
-  lc.clearDisplay(1);
-
-
   bpmMmillis = (float)60 / (float)bpm * (float)1000;
 
 
@@ -80,27 +85,18 @@ pinMode(OutPut1, OUTPUT);
 
 String originalMatrix[] =
 {
-  "00010000",
-  "01001000",
-  "10010000",
-  "00000000",
-  "00000000",
-  "00110010",
-  "00000000",
-  "01011001"
+  "0001000000010000",
+  "0100100001001000",
+  "1001000010010000",
+  "0000000000000000",
+  "0000000000000000",
+  "0011001000110010",
+  "0000000000000000",
+  "0101100101011001"  
 };
-
-
-
-
-
 void loop()
 {
   CheckButton();
-
-
-
-  
   if (runSequencer && menu==1)
   {
     Sequence();
