@@ -1,14 +1,14 @@
 # Blade Music 88-Sequencer
 
-Blade Music 88-Sequencer är en sequencer med stora möjligheter.
+Blade Music 88 Sequencer is a sequencer with great potential.
 
-Utgångarna är trigger med 0v eller 10v
-Det går välja hastighet(Bpm) och det går enkelt byta håll på en track.
-Det finns ett A och ett B spår som man enkelt kan hoppa mellan.
-Givetvis kan man manuellt trigga utgångar med knappar.
+The outputs are trigger with 0v or 10v
+It can select the speed (Bpm) and it is easy to change track.
+There is an A and a B track that you can easily jump between.
+Of course you can manually trigger outputs with buttons.
 
 
-### Modulen har i stora drag 3 delar.
- - Display för göra det enklare att kontrollera modulen.
- -  8x16 matrix för att enkelt editera och se sina tracks.
- -  knappar och utgångar som då är det de delar man integrerar med
+### The module has largely 3 parts.
+ - Display to make it easier to control the module.
+ - 8x16 matrix to easily edit and view tracks.
+ - buttons and outputs which then are the parts with which you integrate
