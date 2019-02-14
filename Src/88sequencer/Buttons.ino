@@ -1,5 +1,32 @@
 void CheckButton()
 {
+  switch (menu) {
+
+    case 3:
+    
+      if ( millis() > selectedDotLastTime + 300)
+      {
+      
+          Serial.println(selectedDotStatus);
+        if (selectedDotStatus)
+        {
+          //off
+          lc.setLed(0, selectedMatricRow, selectedMatricCol, false);
+          selectedDotStatus=false;
+        }
+        else
+        {
+          //on
+          lc.setLed(0, selectedMatricRow, selectedMatricCol, true);
+           selectedDotStatus=true;
+        }
+        selectedDotLastTime=millis();
+      }
+      break;
+  }
+
+
+
   buttonState = digitalRead(buttonPin);
 
   // compare the buttonState to its previous state
@@ -9,7 +36,7 @@ void CheckButton()
       // if the current state is HIGH then the button went from off to on:
 
       Serial.println("on");
-       SetStartMatrix();
+      SetStartMatrix();
 
 
     } else {
@@ -33,44 +60,20 @@ void CheckButton()
     if (result == r.clockwise()) {
       switch (menu) {
         case 2:
-          lc.clearDisplay(0);
-          selectedMatricRow++;
-          if (selectedMatricRow == 8)
-          {
-            selectedMatricRow = 0;
-          }
-          lc.setRow(0, selectedMatricRow, B11111111);
+          HandleMatrixRowCW();
           break;
         case 3:
-          SetStartMatrix();
-          selectedMatricCol++;
-          if (selectedMatricCol == 8)
-          {
-            selectedMatricCol = 0;
-          }
-          lc.setLed(0, selectedMatricRow, selectedMatricCol,true);
+          HandleMatrixColCW();
           break;
       }
     }
     else if (result == r.counterClockwise()) {
       switch (menu) {
         case 2:
-          lc.clearDisplay(0);
-          selectedMatricRow--;
-          if (selectedMatricRow == -1)
-          {
-            selectedMatricRow = 7;
-          }
-          lc.setRow(0, selectedMatricRow, B11111111);
+          HandleMatrixRowCCW();
           break;
         case 3:
-          SetStartMatrix();
-          selectedMatricCol--;
-          if (selectedMatricCol == -1)
-          {
-            selectedMatricCol = 7;
-          }
-          lc.setLed(0, selectedMatricRow, selectedMatricCol,true);
+          HandleMatrixColCCW();
           break;
       }
     }
@@ -92,11 +95,10 @@ void CheckButton()
         SetStartMatrix();
         menu = 3;
         selectedMatricCol = 0;
-        lc.setLed(0, selectedMatricRow, selectedMatricCol,true);
+        lc.setLed(0, selectedMatricRow, selectedMatricCol, true);
         break;
       case 3:
         ChangeMatrix(selectedMatricRow, selectedMatricCol);
-        SetStartMatrix();
         break;
     }
   }

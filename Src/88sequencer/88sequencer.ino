@@ -8,6 +8,10 @@ Rotary r2=Rotary(7,6,5);
 
 
 const int  buttonPin = 8;
+int OutPut0 = 9;
+int OutPut1 = 13;
+
+
 
 int x = 0;
 int maxNumber = 2;
@@ -22,10 +26,21 @@ int selectedMatricRow=0;
 int selectedMatricCol=0;
 int buttonState = 0;         // current state of the button
 int lastButtonState = 0;     // previous state of the button
+long selectedDotLastTime=0;
+bool selectedDotStatus=false;
+
+long selectedoutputOnTime=0;
+bool selectedoutputStatus=false;
+
+
 
 void setup()
 {
   pinMode(buttonPin, INPUT);
+pinMode(OutPut0, OUTPUT);
+pinMode(OutPut1, OUTPUT);
+ digitalWrite(OutPut0, LOW);
+  digitalWrite(OutPut1, LOW);
 
 
   Serial.begin(9600);   // only for debugging, comment out later
@@ -63,7 +78,7 @@ void setup()
 }
 
 
-char *originalMatrix[] =
+String originalMatrix[] =
 {
   "00010000",
   "01001000",
@@ -82,6 +97,10 @@ char *originalMatrix[] =
 void loop()
 {
   CheckButton();
+
+
+
+  
   if (runSequencer && menu==1)
   {
     Sequence();

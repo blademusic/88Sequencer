@@ -8,13 +8,13 @@
 void WriteText7Segment(String text)
 {
 
-int lost=8-(text.length());
-for(int i=0; i<lost; i++)
-{
-  text=text+' ';
-}
+  int lost = 8 - (text.length());
+  for (int i = 0; i < lost; i++)
+  {
+    text = text + ' ';
+  }
 
-  
+
   char copy[9];
   text.toCharArray(copy, 9);
   int pos = 8;
@@ -22,7 +22,7 @@ for(int i=0; i<lost; i++)
   {
     pos--;
     if (copy[i] == ' ')
-    {     
+    {
       lc.setChar(1, pos, ' ', false);
     }
     else
@@ -37,7 +37,7 @@ void SetStartMatrix()
 {
   for (int i = 0; i < 8; i++)
   {
-    char* row = originalMatrix[i];
+    String row = originalMatrix[i];
     for (int j = 0; j < 8; j++)
     {
       char pos0 = row[j];
@@ -54,33 +54,13 @@ void SetStartMatrix()
 }
 
 
-void ChangeMatrix(int r, int c)
-{
-   Serial.println(String(r)+":"+String(c));
 
-   char* row = originalMatrix[r];
-    Serial.println(row);
-   char point = row[c];
-   if(point=='1')
-   {
-    point='0';
-   }
-   else
-   {
-    point='1';
-   }
-   row[c]=point;
-   originalMatrix[r]=row;
-   
-      char* row2 = originalMatrix[r];
-    Serial.println(row2);
-}
 
 void ResetMatrixCol(int col)
 {
   for (int i = 0; i < 8; i++)
   {
-    char* row = originalMatrix[i];
+    String row = originalMatrix[i];
     char pos0 = row[col];
     if (pos0 == '1')
     {
@@ -125,22 +105,10 @@ void loopLed(int i)
 void ClearAll()
 {
 
-  byte clearAll[] =
-  {
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000
-  };
-
 
   for (int i = 0; i < 8; i++)
   {
-    lc.setRow(0, i, clearAll[i]);
+    lc.setRow(0, i, B00000000);
   }
 
 }
@@ -148,59 +116,12 @@ void ClearAll()
 void FillAll()
 {
 
-  byte clearAll[] =
-  {
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111
-  };
+
 
 
   for (int i = 0; i < 8; i++)
   {
-    lc.setRow(0, i, clearAll[i]);
-  }
-
-}
-
-
-void sinvader1b()
-{
-
-  byte invader1b[] =
-  {
-    B00000000,  // second frame of invader #1
-
-    B11111111,
-    B00000000,
-    B11111111,
-    B00000000,
-    B11111111,
-    B00000000,
-    B11111111
-  };
-
-  for (int i = 0; i < 8; i++)
-  {
-    // lc.setRow(0,i,invader1b[i]);
-
-
-
-    /* Set the status of a single Led.
-       Params :
-         addr  address of the display
-         row   the row of the Led (0..7)
-         col   the column of the Led (0..7)
-         state If true the led is switched on, if false it is switched off
-    */
-
-    lc.setLed(0, i, 0, true);
-    lc.setLed(0, i, 5, true);
+    lc.setRow(0, i, B11111111);
   }
 
 }
