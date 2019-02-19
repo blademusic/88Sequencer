@@ -5,202 +5,178 @@
      col   the column of the Led (0..7)
      state If true the led is switched on, if false it is switched off
 */
-void WriteText7Segment(String text)
-{
-
-int lost=8-(text.length());
-for(int i=0; i<lost; i++)
-{
-  text=text+' ';
-}
-
-  
-  char copy[9];
-  text.toCharArray(copy, 9);
-  int pos = 8;
-  for (int i = 0; i < 8; i++)
-  {
-    pos--;
-    if (copy[i] == ' ')
-    {     
-      lc.setChar(1, pos, ' ', false);
-    }
-    else
-    {
-      lc.setChar(1, pos, copy[i], false);
-    }
-  }
-}
-
-
 void SetStartMatrix()
 {
   for (int i = 0; i < 8; i++)
   {
-    char* row = originalMatrix[i];
-    for (int j = 0; j < 8; j++)
+    String row = originalMatrix[i];
+    for (int j = 0; j < 16; j++)
     {
+      int matrix = 0;
+      if (j > 7)
+      {
+        matrix = 1;
+      }
       char pos0 = row[j];
+
       if (pos0 == '1')
       {
-        lc.setLed(0, i, j, true);
+        if (matrix == 0)
+        {
+          lc.setLed(matrix, i, j, true);
+        }
+        else
+        {
+          lc.setLed(matrix, i, j - 8, true);
+        }
       }
       else
       {
-        lc.setLed(0, i, j, false);
+        if (matrix == 0)
+        {
+          lc.setLed(matrix, i, j, false);
+        }
+        else
+        {
+          lc.setLed(matrix, i, j - 8, false);
+        }
       }
     }
   }
 }
 
 
-void ChangeMatrix(int r, int c)
-{
-   Serial.println(String(r)+":"+String(c));
 
-   char* row = originalMatrix[r];
-    Serial.println(row);
-   char point = row[c];
-   if(point=='1')
-   {
-    point='0';
-   }
-   else
-   {
-    point='1';
-   }
-   row[c]=point;
-   originalMatrix[r]=row;
-   
-      char* row2 = originalMatrix[r];
-    Serial.println(row2);
-}
 
-void ResetMatrixCol(int col)
+void ResetMatrixCol(int r, int col, int dir)
 {
-  for (int i = 0; i < 8; i++)
+  if (dir == 1)
   {
-    char* row = originalMatrix[i];
-    char pos0 = row[col];
-    if (pos0 == '1')
+    if (col == 0)
     {
-      lc.setLed(0, i, col, true);
+      col = 15;
     }
     else
     {
-      lc.setLed(0, i, col, false);
+      col--;
     }
   }
-}
-
-
-
-void loopLed(int i)
-{
-  if (i == 0)
+ else if (dir == 2)
   {
-    //clear all
-    //ClearAll();
-    //reset 8
-    ResetMatrixCol(7);
-    for (int l = 0; l < 8; l++)
+    if (col == 15)
     {
-      lc.setLed(0, l, i, true);
+      col = 0;
+    }
+    else
+    {
+      col++;
+    }
+  }
+
+  int matrix = 0;
+  if (col > 7)
+  {
+    matrix = 1;
+  }
+  int c = col;
+
+  String row = originalMatrix[r];
+  char pos0 = row[c];
+  if (pos0 == '1')
+  {
+    if (matrix == 0)
+    {
+      lc.setLed(matrix, r, c, true);
+    }
+    else
+    {
+      lc.setLed(matrix, r, c - 8, true);
     }
 
   }
   else
   {
-    ResetMatrixCol(i - 1);
-    for (int k = 0; k < 8; k++)
+    if (matrix == 0)
     {
-      lc.setLed(0, k, i, true);
+      lc.setLed(matrix, r, c, false);
     }
-
+    else
+    {
+      lc.setLed(matrix, r, c - 8, false);
+    }
   }
+
 }
 
+
+
+void LoopLeds()
+{
+  for (int i = 0; i < 8; i ++ )
+  {
+    switch (i)
+    {
+      case 0:
+        LoopLedRow(i, row0Step,row0StepDir);
+        break;
+      case 1:
+        LoopLedRow(i, row1Step,row1StepDir);
+        break;
+      case 2:
+        LoopLedRow(i, row2Step,row2StepDir);
+        break;
+      case 3:
+        LoopLedRow(i, row3Step,row3StepDir);
+        break;
+      case 4:
+        LoopLedRow(i, row4Step,row4StepDir);
+        break;
+      case 5:
+        LoopLedRow(i, row5Step,row5StepDir);
+        break;
+      case 6:
+        LoopLedRow(i, row6Step,row6StepDir);
+       
+        break;
+      case 7:
+        LoopLedRow(i, row7Step,row7StepDir);
+        break;
+
+    }
+  }
+}
+void LoopLedRow(int r, int rowstep,int dir)
+{
+  ResetMatrixCol(r, rowstep,dir);
+  int matrix = 0;
+  if (rowstep > 7)
+  {
+    matrix = 1;
+  }
+  if (matrix == 0)
+  {
+    lc.setLed(matrix, r, rowstep, true);
+  }
+  else
+  {
+    lc.setLed(matrix, r, rowstep - 8, true);
+  }
+}
 
 
 void ClearAll()
 {
-
-  byte clearAll[] =
-  {
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000,
-    B00000000
-  };
-
-
   for (int i = 0; i < 8; i++)
   {
-    lc.setRow(0, i, clearAll[i]);
+    lc.setRow(0, i, B00000000);
+    lc.setRow(1, i, B00000000);
   }
-
 }
-
 void FillAll()
 {
-
-  byte clearAll[] =
-  {
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111,
-    B11111111
-  };
-
-
   for (int i = 0; i < 8; i++)
   {
-    lc.setRow(0, i, clearAll[i]);
+    lc.setRow(0, i, B11111111);
+    lc.setRow(1, i, B11111111);
   }
-
-}
-
-
-void sinvader1b()
-{
-
-  byte invader1b[] =
-  {
-    B00000000,  // second frame of invader #1
-
-    B11111111,
-    B00000000,
-    B11111111,
-    B00000000,
-    B11111111,
-    B00000000,
-    B11111111
-  };
-
-  for (int i = 0; i < 8; i++)
-  {
-    // lc.setRow(0,i,invader1b[i]);
-
-
-
-    /* Set the status of a single Led.
-       Params :
-         addr  address of the display
-         row   the row of the Led (0..7)
-         col   the column of the Led (0..7)
-         state If true the led is switched on, if false it is switched off
-    */
-
-    lc.setLed(0, i, 0, true);
-    lc.setLed(0, i, 5, true);
-  }
-
 }
