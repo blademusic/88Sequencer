@@ -1,56 +1,54 @@
+void read74HC165()
+{
+  digitalWrite (Load, LOW);        // - Read the push Button state into the 74HC165 SPI Reg
+  digitalWrite (Load, HIGH);       // - drop Load state
+  SPI.beginTransaction( Settings165 );
+  digitalWrite (SSin, LOW);        // - Enable 74HC165 / Clock
+  SPI.transfer(Buttonsbuffer, sizeof(Buttonsbuffer));
+  bool changed = false;
+  for (int i = 0; i < sizeof(Buttonsbuffer); i++)
+  {
+    if (Buttonsbuffer[i] != ButtonsbufferOld[i])
+    {
+      changed = true;
+      ButtonsbufferOld[i] = Buttonsbuffer[i];
+    }
+  }
+  if (changed)
+  {
+    Serial.println("changed");
+    Serial.println(Buttonsbuffer[0], BIN);
+    Serial.println(Buttonsbuffer[1], BIN);
+    Serial.println("klar");
+  }
+  SPI.endTransaction();
+}
+
 void CheckButton()
 {
+  read74HC165() ;
   switch (menu) {
-
     case 3:
-    
       if ( millis() > selectedDotLastTime + 300)
       {
-      
-          Serial.println(selectedDotStatus);
+
+        Serial.println(selectedDotStatus);
         if (selectedDotStatus)
         {
           //off
           lc.setLed(0, selectedMatricRow, selectedMatricCol, false);
-          selectedDotStatus=false;
+          selectedDotStatus = false;
         }
         else
         {
           //on
           lc.setLed(0, selectedMatricRow, selectedMatricCol, true);
-           selectedDotStatus=true;
+          selectedDotStatus = true;
         }
-        selectedDotLastTime=millis();
+        selectedDotLastTime = millis();
       }
       break;
   }
-
-
-
-  buttonState = digitalRead(buttonPin);
-
-  // compare the buttonState to its previous state
-  if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button went from off to on:
-
-      Serial.println("on");
-      SetStartMatrix();
-
-
-    } else {
-      // if the current state is LOW then the button went from on to off:
-      Serial.println("off");
-    }
-    // Delay a little bit to avoid bouncing
-    delay(300);
-  }
-  // save the current state as the last state, for next time through the loop
-  lastButtonState = buttonState;
-
-  CheckRotary2();
-
   volatile unsigned char result = r.process();
   if (result != 0)
   {
@@ -116,13 +114,13 @@ void CheckRotary2()
       Serial.println("Clockwise --2");
       bpm--;
       bpmMmillis = (float)60 / (float)bpm * (float)1000;
-//      WriteText7Segment("B-" + String(bpm));
+      //      WriteText7Segment("B-" + String(bpm));
     }
     else if (result == r2.counterClockwise()) {
       Serial.println("Counter-Clockwise  --2");
       bpm++;
       bpmMmillis = (float)60 / (float)bpm * (float)1000;
-//      WriteText7Segment("B-" + String(bpm));
+      //      WriteText7Segment("B-" + String(bpm));
     }
   }
   if (r2.buttonPressedReleased(25)) {
@@ -130,7 +128,7 @@ void CheckRotary2()
     menu = 1;
     if (runSequencer && menu == 1)
     {
-//      WriteText7Segment("B-" + String(bpm));
+      //      WriteText7Segment("B-" + String(bpm));
     }
   }
 }

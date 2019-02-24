@@ -5,29 +5,20 @@
 LedControl lc = LedControl(12, 10, 11, 2); // Pins: DIN,CLK,CS, # of Display connected
 Rotary r2 = Rotary(4, 3, 2);        // there is no must for using interrupt pins !!
 Rotary r = Rotary(20, 21, 22);
-
-const int  buttonPin = 8;
-int OutPut0 = 9;
-int OutPut1 = 13;
-
-//int DS_pin = 5; //8 data
-//int STCP_pin = 6; //9 latch
-//int SHCP_pin = 52; //10 shcp clock
-
-
+byte Buttonsbuffer[] = {1, 2};
+byte ButtonsbufferOld[] = {1, 2};
 int x = 0;
 int maxNumber = 2;
 int bpm = 60;
 long bpmMmillis;
 long bpmLastRun = 0;
 int sequencerStep = 0;
-#define HALF_STEP
+//#define HALF_STEP
 bool runSequencer = false;
 int menu = 0;
 int selectedMatricRow = 0;
 int selectedMatricCol = 0;
-int buttonState = 0;         // current state of the button
-int lastButtonState = 0;     // previous state of the button
+
 long selectedDotLastTime = 0;
 bool selectedDotStatus = false;
 
@@ -52,46 +43,43 @@ int row5StepDir = 1;
 int row6StepDir = 2;
 int row7StepDir = 2;
 
-byte TrackOutputs=0x00;
-
+byte TrackOutputs = 0x00;
+#define   SSin  9
+#define   SSout  7
 boolean registers[16];
+SPISettings Settings165( SPI_CLOCK_DIV2, MSBFIRST, SPI_MODE0);
+
+int ploadPin         = 8;
+int clockEnablePin   = 9;
+
+#define   Load  8
 void setup()
 {
-  pinMode(buttonPin, INPUT);
-  pinMode(OutPut0, OUTPUT);
-  pinMode(OutPut1, OUTPUT);
-  digitalWrite(OutPut0, LOW);
-  digitalWrite(OutPut1, LOW);
-
-  pinMode(51, OUTPUT);
-  pinMode(52, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(9, OUTPUT); //input button
-
-SPI.setBitOrder(MSBFIRST);
-SPI.setDataMode(SPI_MODE0);
-SPI.setClockDivider(SPI_CLOCK_DIV2);
-SPI.begin();
-
-
-
-SPI.transfer(255);
-SPI.transfer(TrackOutputs);
-
-digitalWrite(7,HIGH);
-digitalWrite(7,LOW);
-
-
-
   Serial.begin(9600);   // only for debugging, comment out later
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
   Serial.println("Initialized");
 
-Serial.println(TrackOutputs);
 
+  pinMode(ploadPin, OUTPUT);
+  pinMode(clockEnablePin, OUTPUT);
+  pinMode(SSout, OUTPUT);
+  pinMode( SSin  , OUTPUT );
+  pinMode( Load  , OUTPUT );
 
+  SPI.setBitOrder(MSBFIRST);
+  SPI.setDataMode(SPI_MODE0);
+  SPI.setClockDivider(SPI_CLOCK_DIV2);
+  SPI.begin();
+
+  digitalWrite(MISO, LOW);
+  digitalWrite(ploadPin, HIGH);
+
+  digitalWrite(SSout, HIGH);
+  SPI.transfer(255);
+  SPI.transfer(TrackOutputs);
+  digitalWrite(SSout, LOW);
 
   lc.shutdown(0, false); // Wake up displays
   lc.setIntensity(0, 5); // Set intensity levels
@@ -100,19 +88,16 @@ Serial.println(TrackOutputs);
   lc.setIntensity(1, 5); // Set intensity levels
   lc.clearDisplay(1);  // Clear Displays
 
-
-
   bpmMmillis = (float)60 / (float)bpm * (float)1000;
-
 
   Serial.println("Bpm:");
   Serial.println(String(bpmMmillis));
   Serial.println("---------------");
 
   SetStartMatrix();
-
+  runSequencer = !runSequencer;
+  menu = 1;
 }
-
 
 String originalMatrix[] =
 {
@@ -127,10 +112,6 @@ String originalMatrix[] =
 };
 void loop()
 {
-  
-
-
-
   CheckButton();
   if (runSequencer && menu == 1)
   {

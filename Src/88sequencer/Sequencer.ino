@@ -1,15 +1,17 @@
+
 void Sequence()
 {
   long now = millis();
 
   if (now >= (bpmLastRun + bpmMmillis))
   {
+    
     UpdateStep();
     bpmLastRun = now;
   }
 }
 void UpdateStep()
-{
+{  
   LoopLeds();
   TrigTrackOut();
   row0Step = GetStep(row0Step, row0StepDir);
@@ -47,42 +49,6 @@ int GetStep(int stepinput, int dir)
   }
   return stepinput;
 }
-
-void SequenceOutput(int stepNr)
-{
-  for (int i = 0; i < 8; i++)
-  {
-    String row = originalMatrix[i];
-    char point = row[stepNr];
-    Serial.println(point);
-    if (point == '1')
-    {
-      //on
-      switch (i)
-      {
-        case 0:
-          digitalWrite(OutPut0, HIGH);
-          break;
-        case 1:
-          digitalWrite(OutPut1, HIGH);
-          break;
-      }
-    }
-    else
-    {
-      //off
-      switch (i)
-      {
-        case 0:
-          digitalWrite(OutPut0, LOW);
-          break;
-        case 1:
-          digitalWrite(OutPut1, LOW);
-          break;
-      }
-    }
-  }
-}
 void TrigTrackOut()
 {
   for (int i = 0; i < 8; i ++ )
@@ -119,6 +85,9 @@ void TrigTrackOut()
 
 void TrackTrig(int r, int c)
 {
+
+
+  
   String row = originalMatrix[r];
   char col = row[c];
   if (col == '1')
@@ -132,6 +101,7 @@ void TrackTrig(int r, int c)
   SPI.transfer(255);
   SPI.transfer(TrackOutputs);
 
-  digitalWrite(7, HIGH);
-  digitalWrite(7, LOW);
+  digitalWrite(SSout, HIGH);
+  digitalWrite(SSout, LOW);
+
 }
