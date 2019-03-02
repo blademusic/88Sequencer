@@ -1,7 +1,11 @@
 #include "LedControl.h"
 #include <rotary.h>
 #include <SPI.h>
+#include <SD.h>
+#include <Wire.h>
+#include <LiquidCrystal_PCF8574.h>
 
+LiquidCrystal_PCF8574 lcd(0x3F);
 LedControl lc = LedControl(12, 10, 11, 2); // Pins: DIN,CLK,CS, # of Display connected
 Rotary r2 = Rotary(4, 3, 2);        // there is no must for using interrupt pins !!
 Rotary r = Rotary(20, 21, 22);
@@ -46,6 +50,7 @@ int row7StepDir = 2;
 byte TrackOutputs = 0x00;
 #define   SSin  9
 #define   SSout  7
+#define   SSsd 6
 boolean registers[16];
 SPISettings Settings165( SPI_CLOCK_DIV2, MSBFIRST, SPI_MODE0);
 
@@ -53,13 +58,65 @@ int ploadPin         = 8;
 int clockEnablePin   = 9;
 
 #define   Load  8
+
+
+void printDirectory(File dir, int numTabs) {
+  while (true) {
+
+    File entry =  dir.openNextFile();
+    if (! entry) {
+      // no more files
+      break;
+    }
+    for (uint8_t i = 0; i < numTabs; i++) {
+      Serial.print('\t');
+    }
+    Serial.print(entry.name());
+    if (entry.isDirectory()) {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    } else {
+      // files have sizes, directories do not
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    entry.close();
+  }
+}
+
+
 void setup()
 {
+int error;
+
+
+  
   Serial.begin(9600);   // only for debugging, comment out later
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
   Serial.println("Initialized");
+Serial.println("Dose: check for LCD");
+Wire.begin();
+  Wire.beginTransmission(0x3F);
+  error = Wire.endTransmission();
+  Serial.print("Error: ");
+  Serial.print(error);
+if (error == 0) {
+    Serial.println(": LCD found.");
+
+  } else {
+    Serial.println(": LCD not found.");
+  } // if
+
+  lcd.begin(16, 2); // initialize the lcd
+ lcd.setBacklight(255);
+    lcd.home(); lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("88 Sequencer");
+ lcd.setCursor(0, 1);
+    lcd.print("****");
+
 
 
   pinMode(ploadPin, OUTPUT);
@@ -67,11 +124,34 @@ void setup()
   pinMode(SSout, OUTPUT);
   pinMode( SSin  , OUTPUT );
   pinMode( Load  , OUTPUT );
-
+  pinMode( SSsd  , OUTPUT );
+   digitalWrite (SSin, LOW);
   SPI.setBitOrder(MSBFIRST);
   SPI.setDataMode(SPI_MODE0);
   SPI.setClockDivider(SPI_CLOCK_DIV2);
   SPI.begin();
+
+
+  Serial.print("Initializing SD card...");
+
+ if (!SD.begin()) {
+    Serial.println("initialization failed!");
+   // while (1);
+  }
+  Serial.println("initialization done.");
+
+  File root;
+  root = SD.open("/");
+
+  printDirectory(root, 0);
+
+  Serial.println("done!");
+
+ // digitalWrite(SSsd, HIGH);
+
+
+
+
 
   digitalWrite(MISO, LOW);
   digitalWrite(ploadPin, HIGH);

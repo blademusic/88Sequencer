@@ -1,5 +1,6 @@
 void read74HC165()
 {
+  digitalWrite (SSin, HIGH);
   digitalWrite (Load, LOW);        // - Read the push Button state into the 74HC165 SPI Reg
   digitalWrite (Load, HIGH);       // - drop Load state
   SPI.beginTransaction( Settings165 );
@@ -22,6 +23,7 @@ void read74HC165()
     Serial.println("klar");
   }
   SPI.endTransaction();
+   digitalWrite (SSin, LOW);
 }
 
 void CheckButton()
