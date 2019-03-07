@@ -1,7 +1,7 @@
 #include "LedControl.h"
 #include <rotary.h>
 #include <SPI.h>
-#include <SD.h>
+//#include <SD.h>
 #include <Wire.h>
 #include <LiquidCrystal_PCF8574.h>
 
@@ -60,63 +60,38 @@ int clockEnablePin   = 9;
 #define   Load  8
 
 
-void printDirectory(File dir, int numTabs) {
-  while (true) {
+//void printDirectory(File dir, int numTabs) {
+//  while (true) {
 
-    File entry =  dir.openNextFile();
-    if (! entry) {
+ //   File entry =  dir.openNextFile();
+   // if (! entry) {
       // no more files
-      break;
-    }
-    for (uint8_t i = 0; i < numTabs; i++) {
-      Serial.print('\t');
-    }
-    Serial.print(entry.name());
-    if (entry.isDirectory()) {
-      Serial.println("/");
-      printDirectory(entry, numTabs + 1);
-    } else {
+     // break;
+   // }
+   // for (uint8_t i = 0; i < numTabs; i++) {
+   //   Serial.print('\t');
+   // }
+   // Serial.print(entry.name());
+   // if (entry.isDirectory()) {
+   //   Serial.println("/");
+   //   printDirectory(entry, numTabs + 1);
+   // } else {
       // files have sizes, directories do not
-      Serial.print("\t\t");
-      Serial.println(entry.size(), DEC);
-    }
-    entry.close();
-  }
-}
+   //   Serial.print("\t\t");
+   //   Serial.println(entry.size(), DEC);
+   // }
+   // entry.close();
+ // }
+//}
 
 
 void setup()
 {
-int error;
-
-
-  
   Serial.begin(9600);   // only for debugging, comment out later
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
   Serial.println("Initialized");
-Serial.println("Dose: check for LCD");
-Wire.begin();
-  Wire.beginTransmission(0x3F);
-  error = Wire.endTransmission();
-  Serial.print("Error: ");
-  Serial.print(error);
-if (error == 0) {
-    Serial.println(": LCD found.");
-
-  } else {
-    Serial.println(": LCD not found.");
-  } // if
-
-  lcd.begin(16, 2); // initialize the lcd
- lcd.setBacklight(255);
-    lcd.home(); lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("88 Sequencer");
- lcd.setCursor(0, 1);
-    lcd.print("****");
-
 
 
   pinMode(ploadPin, OUTPUT);
@@ -124,36 +99,36 @@ if (error == 0) {
   pinMode(SSout, OUTPUT);
   pinMode( SSin  , OUTPUT );
   pinMode( Load  , OUTPUT );
-  pinMode( SSsd  , OUTPUT );
-   digitalWrite (SSin, LOW);
+  //pinMode( SSsd  , OUTPUT );
+  // digitalWrite (SSin, LOW);
   SPI.setBitOrder(MSBFIRST);
   SPI.setDataMode(SPI_MODE0);
   SPI.setClockDivider(SPI_CLOCK_DIV2);
   SPI.begin();
 
 
-  Serial.print("Initializing SD card...");
+ // Serial.print("Initializing SD card...");
 
- if (!SD.begin()) {
-    Serial.println("initialization failed!");
+ //if (!SD.begin()) {
+ //   Serial.println("initialization failed!");
    // while (1);
-  }
-  Serial.println("initialization done.");
+ // }
+ // Serial.println("initialization done.");
 
-  File root;
-  root = SD.open("/");
+ // File root;
+ // root = SD.open("/");
 
-  printDirectory(root, 0);
+ // printDirectory(root, 0);
 
-  Serial.println("done!");
+ // Serial.println("done!");
 
- // digitalWrite(SSsd, HIGH);
-
-
+  //digitalWrite(SSsd, HIGH);
 
 
 
-  digitalWrite(MISO, LOW);
+
+
+  //digitalWrite(MISO, LOW);
   digitalWrite(ploadPin, HIGH);
 
   digitalWrite(SSout, HIGH);
@@ -177,6 +152,31 @@ if (error == 0) {
   SetStartMatrix();
   runSequencer = !runSequencer;
   menu = 1;
+int error;
+Wire.begin();
+  Wire.beginTransmission(0x3F);
+  error = Wire.endTransmission();
+  Serial.print("Error: ");
+  Serial.print(error);
+
+  if (error == 0) {
+    Serial.println(": LCD found.");
+
+  } else {
+    Serial.println(": LCD not found.");
+  } // if
+
+  lcd.begin(16, 2); // initialize the lcd
+
+ lcd.setBacklight(255);
+    lcd.home(); lcd.clear();
+  
+ lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("*** first line.");
+    lcd.setCursor(0, 1);
+    lcd.print("*** second line.");
+  
 }
 
 String originalMatrix[] =
