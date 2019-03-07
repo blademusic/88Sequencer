@@ -12,20 +12,108 @@ void read74HC165()
     if (Buttonsbuffer[i] != ButtonsbufferOld[i])
     {
       changed = true;
+      ChangeButtonValue(i, ButtonsbufferOld[i] , Buttonsbuffer[i]);
       ButtonsbufferOld[i] = Buttonsbuffer[i];
     }
   }
   if (changed)
   {
-    Serial.println("changed");
-    Serial.println(Buttonsbuffer[0], BIN);
-    Serial.println(Buttonsbuffer[1], BIN);
-    Serial.println("klar");
+   // Serial.println("changed");
+    //Serial.println(Buttonsbuffer[0], BIN);
+    //Serial.println(Buttonsbuffer[1], BIN);
+   // Serial.println("klar");
   }
   SPI.endTransaction();
-   digitalWrite (SSin, LOW);
+  digitalWrite (SSin, LOW);
 }
-
+void ChangeButtonValue(int pos, byte old, byte changed)
+{
+  if (pos == 1)
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      int ov = bitRead(old, i);
+      int nv = bitRead(changed, i);     
+      if (ov != nv)
+      {
+        switch (i)
+        {
+          case 0:
+          row7StepDir=nv;
+            break;
+              case 1:
+          row6StepDir=nv;
+            break;
+              case 2:
+          row5StepDir=nv;
+            break;
+              case 3:
+          row4StepDir=nv;
+            break;
+              case 4:
+          row3StepDir=nv;
+            break;
+              case 5:
+          row2StepDir=nv;
+            break;
+              case 6:
+          row1StepDir=nv;
+            break;
+              case 7:
+          row0StepDir=nv;
+            break;            
+        }
+      }
+    }
+    
+  }
+  if (pos == 0)
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      int ov = bitRead(old, i);
+      int nv = bitRead(changed, i);
+    
+      int v = 0;
+     
+      if(nv==1)
+      {
+        v=2;
+      }     
+      if (ov != nv)
+      {
+        switch (i)
+        {
+          case 0:
+          row7StepDir=v;
+            break;
+              case 1:
+          row6StepDir=v;
+            break;
+              case 2:
+          row5StepDir=v;
+            break;
+              case 3:
+          row4StepDir=v;
+            break;
+              case 4:
+          row3StepDir=v;
+            break;
+              case 5:
+          row2StepDir=v;
+            break;
+              case 6:
+          row1StepDir=v;
+            break;
+              case 7:
+          row0StepDir=v;
+            break;            
+        }
+      }
+    }
+   
+  }
+}
 void CheckButton()
 {
   read74HC165() ;

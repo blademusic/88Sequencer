@@ -15,6 +15,9 @@ void UpdateStep()
   LoopLeds();
   TrigTrackOut();
   row0Step = GetStep(row0Step, row0StepDir);
+//Serial.println("direction= "+String(row0Step)+","+String(row0StepDir));
+
+  
   row1Step = GetStep(row1Step, row1StepDir);
   row2Step = GetStep(row2Step, row2StepDir);
   row3Step = GetStep(row3Step, row3StepDir);
@@ -26,6 +29,7 @@ void UpdateStep()
 
 int GetStep(int stepinput, int dir)
 {
+  
   if (dir == 1)
   {
     stepinput++;
