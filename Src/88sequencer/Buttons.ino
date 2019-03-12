@@ -6,23 +6,19 @@ void read74HC165()
   SPI.beginTransaction( Settings165 );
   digitalWrite (SSin, LOW);        // - Enable 74HC165 / Clock
   SPI.transfer(Buttonsbuffer, sizeof(Buttonsbuffer));
-  bool changed = false;
+ 
   for (int i = 0; i < sizeof(Buttonsbuffer); i++)
   {
+    
+    
     if (Buttonsbuffer[i] != ButtonsbufferOld[i])
     {
-      changed = true;
+    Serial.println(Buttonsbuffer[i],BIN);
       ChangeButtonValue(i, ButtonsbufferOld[i] , Buttonsbuffer[i]);
       ButtonsbufferOld[i] = Buttonsbuffer[i];
     }
   }
-  if (changed)
-  {
-   // Serial.println("changed");
-    //Serial.println(Buttonsbuffer[0], BIN);
-    //Serial.println(Buttonsbuffer[1], BIN);
-   // Serial.println("klar");
-  }
+  
   SPI.endTransaction();
   digitalWrite (SSin, LOW);
 }

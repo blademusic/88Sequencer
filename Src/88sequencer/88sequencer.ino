@@ -1,7 +1,6 @@
 #include "LedControl.h"
 #include <rotary.h>
 #include <SPI.h>
-//#include <SD.h>
 #include <Wire.h>
 #include <LiquidCrystal_PCF8574.h>
 
@@ -99,8 +98,8 @@ void setup()
   pinMode(SSout, OUTPUT);
   pinMode( SSin  , OUTPUT );
   pinMode( Load  , OUTPUT );
-  //pinMode( SSsd  , OUTPUT );
-  // digitalWrite (SSin, LOW);
+  pinMode( SSsd  , OUTPUT );
+   digitalWrite (SSsd, LOW);
   SPI.setBitOrder(MSBFIRST);
   SPI.setDataMode(SPI_MODE0);
   SPI.setClockDivider(SPI_CLOCK_DIV2);
